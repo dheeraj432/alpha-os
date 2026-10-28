@@ -1,8 +1,10 @@
-# OurOS
+# ALPHA OS
 
-An experimental operating system built from the ground up using C and x86 Assembly.
+Assembling Leading Programmers & Hackers All-around
 
-OurOS is an educational operating-system project focused on developing a kernel foundation and eventually exploring an AI-centered operating-system experience.
+An experimental operating system built from scratch using C and x86 Assembly, with a long-term vision of AI-centered interaction.
+
+ALPHA OS welcomes developers, programmers, systems engineers, and hackers worldwide to help build its foundation.
 
 ## Current Features
 
@@ -19,7 +21,7 @@ OurOS is an educational operating-system project focused on developing a kernel 
 
 ## Development Status
 
-OurOS is an experimental work in progress. Features are developed and tested incrementally; this is not yet a production-ready operating system.
+ALPHA OS is an experimental work in progress. Features are developed and tested incrementally; this is not yet a production-ready operating system.
 
 Planned areas include:
 - Multitasking and CPU scheduling
