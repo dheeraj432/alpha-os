@@ -1,5 +1,6 @@
 #include "memory/memory.h"
 #include "memory/heap.h"
+#include "task.h"
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 #define VGA_SIZE (VGA_WIDTH * VGA_HEIGHT)
@@ -477,6 +478,56 @@ static void erase_input(char *command, int *length)
     command[0] = '\0';
 }
 
+
+static volatile unsigned int sched_a_count = 0;
+static volatile unsigned int sched_b_count = 0;
+
+static void sched_task_a(void)
+{
+    for (int i = 0; i < 3; i++) {
+        sched_a_count++;
+        task_yield();
+    }
+}
+
+static void sched_task_b(void)
+{
+    for (int i = 0; i < 3; i++) {
+        sched_b_count++;
+        task_yield();
+    }
+}
+
+static void run_scheduler_test(void)
+{
+    sched_a_count = 0;
+    sched_b_count = 0;
+
+    int a = task_create(sched_task_a);
+    int b = task_create(sched_task_b);
+
+    if (a < 0 || b < 0) {
+        print("FAIL: Could not create both test tasks.\n");
+        return;
+    }
+
+    print("Running cooperative scheduler test...\n");
+    task_schedule();
+
+    print("Task A iterations: ");
+    print_number(sched_a_count);
+    putchar('\n');
+
+    print("Task B iterations: ");
+    print_number(sched_b_count);
+    putchar('\n');
+
+    if (sched_a_count == 3 && sched_b_count == 3)
+        print("PASS: Both tasks completed successfully.\n");
+    else
+        print("FAIL: Unexpected task counters.\n");
+}
+
 static void execute_command(const char *cmd)
 {
     if (streq(cmd, "help")) {
@@ -492,6 +543,7 @@ static void execute_command(const char *cmd)
         print("  uptime - Show system uptime\n");
         print("  clear  - Clear the screen\n");
         print("  reboot - Restart OurOS\n");
+        print("  schedtest - Test cooperative multitasking\n");
     } else if (streq(cmd, "about")) {
         print("OurOS - a custom operating system.\n");
         print("Built with Assembly and C.\n");
@@ -878,6 +930,8 @@ static void execute_command(const char *cmd)
         for (;;) {
             __asm__ volatile ("cli; hlt");
         }
+    } else if (streq(cmd, "schedtest")) {
+        run_scheduler_test();
     } else if (cmd[0] != '\0') {
         print("Unknown command: ");
         print(cmd);
@@ -905,6 +959,7 @@ void kernel_main(void)
 
     memory_init(memory_map, map_count);
     heap_init();
+    task_init();
 
     /* Initialize the interrupt system in a safe order. */
     idt_init();
