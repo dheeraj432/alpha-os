@@ -1,0 +1,13 @@
+# Compiled output and disk images
+build/
+*.o
+*.elf
+*.bin
+*.img
+
+# Editor and operating-system files
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
